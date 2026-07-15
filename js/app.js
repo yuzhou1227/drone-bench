@@ -526,8 +526,8 @@ function checkBackupReminder(){
 
 function stagger(){
   let idx=0;
-  document.querySelectorAll('.feed-card, .feed-stat, .tsk, .sidebar-card, .tmr-card').forEach((el)=>{
-    el.style.animationDelay=(80+idx*60)+'ms';
+  document.querySelectorAll('.watt-card').forEach((el)=>{
+    el.style.animationDelay=(80+idx*80)+'ms';
     idx++;
   });
 }
