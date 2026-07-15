@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="无人机应用技术学习工作台 - 每日任务、专注计时、AI助教">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<title>Drone Bench · 无人机学习工作台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">⚡</div>
+      <div class="sidebar-brand-text">
+        <div class="sidebar-brand-name">Drone <span>Bench</span></div>
+        <div class="sidebar-brand-sub">无人机学习工作台</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-nav-item active" data-tab="dashboard">
+        <i data-lucide="layout-dashboard"></i> 工作台
+      </button>
+      <button class="sidebar-nav-item" data-tab="training">
+        <i data-lucide="wrench"></i> 学习实训
+      </button>
+      <button class="sidebar-nav-item" data-tab="quiz">
+        <i data-lucide="file-question"></i> 刷题
+      </button>
+      <button class="sidebar-nav-item" id="btn-stats">
+        <i data-lucide="bar-chart-3"></i> 统计
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-upgrade" id="btn-export">
+        <i data-lucide="upload"></i> 导出备份
+      </button>
+    </div>
+  </aside>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="top-header-left">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="切换菜单">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="text" placeholder="搜索任务、知识点..." id="global-search">
+        </div>
+      </div>
+      <div class="top-header-right">
+        <button class="tn-icon" id="btn-open-chat" aria-label="AI对话"><i data-lucide="message-square"></i></button>
+        <button class="tn-icon" id="theme-btn" aria-label="切换主题"><i data-lucide="moon"></i></button>
+        <button class="tn-icon" id="btn-import" aria-label="导入备份" style="display:none"><i data-lucide="download"></i></button>
+        <input type="file" id="file-input" accept=".json" hidden>
+        <button class="tn-icon tn-icon-danger" id="btn-reset" aria-label="重置数据" style="display:none"><i data-lucide="trash-2"></i></button>
+        <div class="user-avatar">D</div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+
+      <!-- Page Header (visible on dashboard) -->
+      <div class="page-header" id="page-header">
+        <h1 class="page-title">工作台</h1>
+        <div class="page-actions">
+          <span class="time-filter" id="tp-week"><i data-lucide="calendar"></i> 第 1 周 · 星期日</span>
+          <button class="btn-export" id="btn-export2" aria-label="导出备份"><i data-lucide="download"></i> 导出</button>
+        </div>
+      </div>
+
+      <!-- Tab: Dashboard -->
+      <div id="tab-dashboard" class="tab-content act">
+        <div class="dashboard">
+
+          <!-- KPI Row -->
+          <div class="kpi-row">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-icon" style="background:#dbeafe;color:#2563eb"><i data-lucide="zap"></i></div>
+                <span class="kpi-pill kpi-pill-neutral">累计</span>
+              </div>
+              <div class="kpi-label">累计打卡</div>
+              <div class="kpi-value" id="st-total">0</div>
+              <div class="kpi-unit">天</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-icon" style="background:#ccfbf1;color:#0d9488"><i data-lucide="flame"></i></div>
+                <span class="kpi-pill kpi-pill-up">连续</span>
+              </div>
+              <div class="kpi-label">连续打卡</div>
+              <div class="kpi-value" id="st-streak">0</div>
+              <div class="kpi-unit">天</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-icon" style="background:#dcfce7;color:#16a34a"><i data-lucide="check-circle"></i></div>
+                <span class="kpi-pill kpi-pill-up" id="tp-days">今日</span>
+              </div>
+              <div class="kpi-label">今日完成</div>
+              <div class="kpi-value" id="st-today">0/0</div>
+              <div class="kpi-unit">任务</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-icon" style="background:#fef3c7;color:#d97706"><i data-lucide="refresh-cw"></i></div>
+                <span class="kpi-pill kpi-pill-down">待复习</span>
+              </div>
+              <div class="kpi-label">待复习</div>
+              <div class="kpi-value" id="st-review">0</div>
+              <div class="kpi-unit">项</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-icon" style="background:#ede9fe;color:#7c3aed"><i data-lucide="trending-up"></i></div>
+                <span class="kpi-pill kpi-pill-up">完成率</span>
+              </div>
+              <div class="kpi-label">本周完成率</div>
+              <div class="kpi-value" id="st-week">0%</div>
+              <div class="kpi-unit">效率</div>
+            </div>
+          </div>
+
+          <!-- Dashboard Grid -->
+          <div class="dashboard-grid">
+            <div class="main-col">
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="bar-chart-3"></i> 本周走线</span>
+                  <span class="watt-card-badge">En Vivo</span>
+                </div>
+                <div class="chart-area">
+                  <div class="prog-chart" id="prog-block">
+                    <div class="pps" id="prog-pps"></div>
+                  </div>
+                  <div class="chart-percent" id="prog-pct">0%</div>
+                </div>
+              </div>
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="calendar"></i> 一周概览</span>
+                </div>
+                <div class="wg" id="wk-grid"></div>
+              </div>
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="check-circle"></i> 今日任务</span>
+                  <div class="goal-ring" id="goal-ring"><div class="goal-ring-inner" id="goal-num">0%</div></div>
+                </div>
+                <div id="task-list"></div>
+              </div>
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="map"></i> 学习路线</span>
+                </div>
+                <div class="rm" id="roadmap"></div>
+              </div>
+
+              <div class="watt-card watt-card-alert">
+                <div class="alert-box">
+                  <div class="alert-icon"><i data-lucide="lightbulb"></i></div>
+                  <div class="alert-body">
+                    <div class="alert-title">今日技巧</div>
+                    <div class="alert-text">飞控校准前务必检查罗盘方向，错误的罗盘装向会导致起飞后失控翻转。</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="book-open"></i> 工作日志</span>
+                </div>
+                <textarea class="watt-input" id="note-area" placeholder="今天学到了什么？遇到了哪些问题？明天打算做什么？"></textarea>
+                <div class="watt-card-footer">
+                  <button class="watt-btn" id="note-save">保存日志</button>
+                  <span class="watt-btn-ok" id="note-ok"><i data-lucide="check"></i> 已保存</span>
+                </div>
+              </div>
+
+            </div>
+
+            <aside class="side-col">
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="timer"></i> 专注计时</span>
+                </div>
+                <div class="timer-ring" id="tmr-ring">
+                  <div class="timer-ring-inner">
+                    <div class="timer-state" id="tmr-state">待开始</div>
+                    <div class="timer-display" id="tmr-display">25:00</div>
+                  </div>
+                </div>
+                <div class="timer-controls">
+                  <div class="timer-buttons">
+                    <button class="watt-btn watt-btn-primary" id="tmr-toggle">开始</button>
+                    <button class="watt-btn" id="tmr-reset">重置</button>
+                  </div>
+                  <div class="timer-durations">
+                    <button class="timer-dur-btn act" data-dur="25">25</button>
+                    <button class="timer-dur-btn" data-dur="45">45</button>
+                    <button class="timer-dur-btn" data-dur="60">60</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="clock"></i> 最近打卡</span>
+                </div>
+                <div id="history-list"></div>
+              </div>
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="list"></i> 最近动态</span>
+                </div>
+                <div class="act" id="activity-list"><div class="aii" style="justify-content:center;border:none;color:var(--text2);font-size:11px">暂无记录，完成第一个任务吧</div></div>
+              </div>
+
+              <div class="watt-card">
+                <div class="watt-card-header">
+                  <span class="watt-card-title"><i data-lucide="cpu"></i> 推荐资源</span>
+                </div>
+                <div class="rl"><a class="ri" href="https://www.bilibili.com/video/BV1TpgAzaEFU" target="_blank"><i data-lucide="cpu"></i> 飞控系统 PX4/ArduPilot 教程</a><a class="ri" href="https://www.bilibili.com/video/BV1o34y157SM" target="_blank"><i data-lucide="zap"></i> 无人机动力系统选型指南</a><a class="ri" href="https://www.bilibili.com/video/BV1Jw4m1178Y" target="_blank"><i data-lucide="compass"></i> 传感器与导航系统详解</a><a class="ri" href="https://www.bilibili.com/video/BV1atStYwEG1" target="_blank"><i data-lucide="monitor"></i> QGC 地面站使用教程</a><a class="ri" href="https://www.bilibili.com/video/BV1nCNbz5ENv" target="_blank"><i data-lucide="book"></i> CAAC 无人机考证真题</a></div>
+              </div>
+
+            </aside>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Tab: Training -->
+      <div id="tab-training" class="tab-content">
+        <div class="tc-inner" style="padding:0">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;flex-wrap:wrap">
+            <i data-lucide="drone" style="width:20px;height:20px"></i>
+            <span class="tc-hd" style="margin-bottom:0">无人机实训工具</span>
+            <div class="scroll-tabs" style="flex:1">
+              <button class="scroll-tab" data-target-id="card-exam">考证模拟</button>
+              <button class="scroll-tab" data-target-id="card-pid">PID 调参</button>
+              <button class="scroll-tab" data-target-id="card-kml">航线规划</button>
+            </div>
+          </div>
+          <div class="tools-grid" id="exam-container"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Quiz -->
+      <div id="tab-quiz" class="tab-content">
+        <div id="quiz-app"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Stats Overlay -->
+<div id="stats-overlay" class="ai-overlay" tabindex="0">
+  <div class="ai-panel" style="max-width:720px">
+    <div class="ai-panel-hd">
+      <div class="ai-panel-hd-l"><i data-lucide="bar-chart-3" style="width:16px;height:16px"></i><span class="ai-panel-title">学习统计</span></div>
+      <button class="ai-panel-close" aria-label="关闭统计面板"><i data-lucide="x" style="width:12px;height:12px"></i></button>
+    </div>
+    <div class="st-body" id="stats-body"></div>
+  </div>
+</div>
+
+<!-- AI Chat Overlay -->
+<div id="ai-overlay" class="ai-overlay" tabindex="0">
+  <div class="ai-panel" style="max-width:640px">
+    <div class="ai-panel-hd">
+      <div class="ai-panel-hd-l"><i data-lucide="message-square" style="width:16px;height:16px"></i><span class="ai-panel-title" id="ai-panel-title"></span><span class="ai-panel-sub" id="ai-panel-sub"></span></div>
+      <span id="ai-key-status"><span class="api-config-link" id="api-config-link" role="button" tabindex="0"><i data-lucide="settings" style="width:12px;height:12px"></i></span></span>
+      <button class="ai-panel-close" aria-label="关闭对话面板"><i data-lucide="x" style="width:12px;height:12px"></i></button>
+    </div>
+    <div class="ai-chat" id="ai-chat"></div>
+    <div class="ai-chat-bar">
+      <input class="ai-chat-input" id="ai-question" placeholder="输入你的问题..." maxlength="2000">
+      <button class="ai-send" id="ai-send" aria-label="发送消息">发送</button>
+    </div>
+    <div class="ai-waiting" id="ai-waiting"><i data-lucide="loader-2" style="width:12px;height:12px" class="lci-spin"></i> 已复制！粘贴到 opencode 对话中</div>
+  </div>
+</div>
+
+<script src="js/study-data.js"></script>
+<script src="js/timer.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/ai-chat.js"></script>
+<script src="js/quiz-data.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/training.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+if('serviceWorker' in navigator && location.protocol.startsWith('http') && typeof navigator.serviceWorker!=='undefined'){
+  navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister())).catch(()=>{});
+  caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).catch(()=>{});
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+</script>
+
+</body>
+</html>

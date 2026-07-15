@@ -1,0 +1,16 @@
+{
+  "name": "Drone Bench · 无人机学习工作台",
+  "short_name": "Drone Bench",
+  "description": "无人机应用技术专业学习工作台 — 覆盖大专三年课程与CAAC考证",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

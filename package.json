@@ -1,0 +1,12 @@
+{
+  "name": "drone-bench",
+  "version": "1.0.0",
+  "description": "无人机应用技术学习工作台 — 每日任务、专注计时、AI助教、考证刷题",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": ["drone", "uav", "学习", "考证", "CAAC"],
+  "license": "MIT"
+}
