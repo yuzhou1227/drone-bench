@@ -47,10 +47,25 @@ function renderExamSimulator(){
     html+='<option value="'+t.value+'">'+t.label+'</option>';
   });
   html+='</select></div></div>';
-  html+='<button class="tc-btn" id="btn-start-exam" style="margin-top:4px"><i data-lucide="play" style="width:12px;height:12px;vertical-align:-1px"></i> 开始考试</button>';
+  html+='<button class="tc-btn-primary" id="btn-start-exam" style="margin-top:6px;width:100%;justify-content:center"><i data-lucide="play" style="width:13px;height:13px"></i> 开始考试</button>';
   var h=loadExamHistory();
   if(h.length){
-    html+='<button class="tc-btn tc-btn-ghost" id="btn-view-history" style="margin-top:4px;width:100%"><i data-lucide="clock" style="width:12px;height:12px;vertical-align:-1px"></i> 查看考试历史 ('+h.length+'次)</button>';
+    var recent=h.slice(0,3);
+    html+='<div style="margin-top:6px;padding-top:10px;border-top:1px solid var(--card-border)">'
+      +'<div class="tc-label" style="margin-bottom:6px"><i data-lucide="clock" style="width:10px;height:10px"></i>最近考试</div>';
+    recent.forEach(function(r,i){
+      var pct=r.pct||0, subName='综合';
+      var found=EXAM_SUBJECTS.find(function(s){return s.id===r.subject;});
+      if(found) subName=found.name;
+      var dateStr=r.date?r.date.slice(0,16).replace('T',' '):'';
+      html+='<div class="exam-hist-item" style="animation:qCardIn .35s ease both;animation-delay:'+(i*60)+'ms" onclick="renderExamHistory()">'
+        +'<div class="exam-hist-left"><div class="exam-hist-sub">'+subName+'</div>'
+        +'<div class="exam-hist-date">'+dateStr+'</div></div>'
+        +'<div class="exam-hist-right"><div class="exam-hist-score '+(r.passed?'pass':'fail')+'">'+pct+'%</div>'
+        +'<span style="font-size:10px;color:var(--text3)">'+(r.passed?'通过':'未通过')+'</span></div></div>';
+    });
+    html+='<button class="tc-btn tc-btn-ghost" id="btn-view-history" style="margin-top:4px;width:100%"><i data-lucide="clock" style="width:12px;height:12px;vertical-align:-1px"></i> 全部考试历史 ('+h.length+'次)</button>';
+    html+='</div>';
   }
   html+='</div></div></div>';
   var grid=el.querySelector('.tools-grid');
